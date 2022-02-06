@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    command: npm run dev
+    ports:
+      - 3000:3000
+    environment:
+      - PG_PASSWORD=password
+      - PG_DB=kenzie_market
+      - PG_USER=postgres
+      - PG_HOST=db # Nome do serviço do banco
+      - SECRET=qualquerCoisa # HASH
+    volumes:
+      - .:/code # Faz um link do diretório atual para diretório do container
+
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=kenzie_market
+    ports:
+      - 5432:5432
+
+
