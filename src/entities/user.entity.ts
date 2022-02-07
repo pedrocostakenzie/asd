@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, JoinColumn } from 'typeorm';
+import Cart from './cart.entity';
 
 @Entity('users')
 export default class User {
@@ -17,6 +18,9 @@ export default class User {
 
     @Column()
     isAdm!: boolean;
+
+    @OneToMany(() => Cart, cart => cart.owner)
+    cart!: Cart[];
 
     @BeforeInsert()
     hashPassword() {

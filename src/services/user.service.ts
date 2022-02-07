@@ -1,37 +1,45 @@
 import { getCustomRepository, getRepository } from "typeorm";
-import { User } from "../entities";
+import { Cart, User } from "../entities";
 import CustomError from "../errors/custom.error";
 import UserRepository from "../repositories/user.repository";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
 
-interface UserBody {
+interface IUser {
   email: string;
-  password: string;
+  password: string | undefined;
   name: string;
   isAdm: boolean;
 }
 
-export const createUser = async (body: UserBody) => {
+export const createUser = async (body: IUser) => {
   try {
     const { email, password, name, isAdm } = body;
 
     const userRepository = getRepository(User);
+    const cartRepository = getRepository(Cart);
 
+    
     const user = userRepository.create({
       email,
       password,
       name,
       isAdm,
     });
-
+    
     await userRepository.save(user);
+
+    const cart = cartRepository.create({
+      owner: user
+    });
+    await cartRepository.save(cart);
 
     return {
       email: user.email,
       name: user.name,
       id: user.id,
       isAdm: user.isAdm,
+      cart: cart.id
     };
   } catch (error) {
     throw new CustomError((error as any).message, 400);
