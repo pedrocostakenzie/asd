@@ -1,29 +1,37 @@
-import bcrypt from 'bcrypt';
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, JoinColumn } from 'typeorm';
-import Cart from './cart.entity';
+import bcrypt from "bcrypt";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
+import Cart from "./cart.entity";
 
-@Entity('users')
+@Entity("users")
 export default class User {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-    @Column({ unique: true })
-    email!: string;
+  @Column({ unique: true })
+  email!: string;
 
-    @Column({ select: false })
-    password!: string;
+  @Column({ select: false })
+  password!: string;
 
-    @Column()
-    name!: string;
+  @Column()
+  name!: string;
 
-    @Column()
-    isAdm!: boolean;
+  @Column({ select: false })
+  isAdm!: boolean;
 
-    @OneToMany(() => Cart, cart => cart.owner)
-    cart!: Cart[];
+  @ManyToMany((type) => Cart)
+  @JoinTable()
+  carts!: Cart[];
 
-    @BeforeInsert()
-    hashPassword() {
-        this.password = bcrypt.hashSync(this.password, 10);
-    }
+  @BeforeInsert()
+  hashPassword() {
+    this.password = bcrypt.hashSync(this.password, 10);
+  }
 }

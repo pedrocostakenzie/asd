@@ -8,7 +8,7 @@ interface IProduct {
   price: number;
 }
 
-export const createUser = async (body: IProduct) => {
+export const createProduct = async (body: IProduct) => {
   try {
     const { name, description, price } = body;
 
@@ -36,15 +36,15 @@ export const createUser = async (body: IProduct) => {
 export const findOneProudct = async (productId: string) => {
   const productRepository = getRepository(Product);
 
-  const user = await productRepository.findOne(productId);
+  const product = await productRepository.findOne(productId);
 
-  return user;
+  return product;
 };
 
 export const listAllProducts = async () => {
   const productRepository = getRepository(Product);
 
-  const users = await productRepository.find();
+  const product = await productRepository.find();
 
-  return users;
+  return product;
 };

@@ -1,0 +1,96 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "KenzieMarket",
+    "description": "KenzieMarket API Docs",
+    "contact": {
+      "name": "Pedro Costa",
+      "url": "https://github.com/phmc99",
+      "email": "phmc99@outlook.com"
+    },
+    "version": "1.0.1"
+  },
+
+  "servers": [
+    {
+      "url": "http://localhost:3000/api-documentation",
+      "description": "Docs"
+    }
+  ],
+
+  "paths": {
+    "/user": {
+      "post": {
+        "description": "Rota para cadastrar usuário",
+        "tags": ["users"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/user"}
+            }
+          }
+        }
+      },
+      "get": {}
+    },
+    "/user/{userId}": {
+      "get": {}
+    },
+    "/login": {
+      "post": {}
+    },
+    "/product": {
+      "post": {},
+      "get": {}
+    },
+    "/product/{productId}": {
+      "get": {}
+    },
+    "/cart": {
+      "post": {},
+      "delete": {},
+      "get": {}
+    },
+    "/cart/{cartId}": {
+      "get": {}
+    },
+    "/buy": {
+      "post": {},
+      "get": {}
+    },
+    "/buy/{buyId}": {
+      "get": {}
+    },
+    "/email": {
+      "post": {}
+    },
+    "/recuperar": {
+      "post": {}
+    },
+    "/alterar_senha": {
+      "post": {}
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "user": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }, 
+          "isAdm": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

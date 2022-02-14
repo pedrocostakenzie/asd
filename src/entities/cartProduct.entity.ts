@@ -1,15 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import Cart from './cart.entity';
+import { Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import  Product  from "./product.entity";
+import  Cart  from "./cart.entity";
 
-@Entity('cart_products')
-export default class CartProduct {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
-    
-    @Column("json")
-    product!: Object;
+@Entity("cart_product")
+export default class CartProuct {
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-    @ManyToOne(() => Cart, cart => cart.products, { onDelete: 'CASCADE', cascade: true})
-    cart!: Cart;
+  @Column("int")
+  quantity!: number | any;
 
+  @Column()
+  productId!: string
+
+  @Column()
+  cartId!: string
 }

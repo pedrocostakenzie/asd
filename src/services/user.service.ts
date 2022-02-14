@@ -14,17 +14,20 @@ interface IUser {
 
 export const createUser = async (body: IUser) => {
   try {
-    const { email, password, name, isAdm } = body;
+    const { email, password, name } = body;
 
     const userRepository = getRepository(User);
     const cartRepository = getRepository(Cart);
 
-    
+    if (!body.isAdm) {
+      body.isAdm = false;
+    }
+
     const user = userRepository.create({
       email,
       password,
       name,
-      isAdm,
+      isAdm: body.isAdm,
     });
     
     await userRepository.save(user);
@@ -39,7 +42,7 @@ export const createUser = async (body: IUser) => {
       name: user.name,
       id: user.id,
       isAdm: user.isAdm,
-      cart: cart.id
+      cart: [cart.id]
     };
   } catch (error) {
     throw new CustomError((error as any).message, 400);
@@ -48,10 +51,18 @@ export const createUser = async (body: IUser) => {
 
 export const findOneUser = async (userId: string) => {
   const userRepository = getRepository(User);
+  const cartRepository = getRepository(Cart);
 
   const user = await userRepository.findOne(userId);
+  const carts = await cartRepository.find({
+    where: {owner: user?.id}
+  })
 
-  return user;
+  const cartOpen = carts.filter(item => !item.paid).map(item => item.id)[0]
+  const cartsClosed = carts.filter(item => item.paid).map(item => item.id)
+
+
+  return {...user, cartOpen, cartsClosed};
 
 }
 
@@ -76,4 +87,34 @@ export const login = async (email: string, password: string) => {
   const token = jwt.sign({ id: user.id }, process.env.SECRET as string, { expiresIn: "1d" });
 
   return token;
+}
+
+export const generateRecoveryToken = async (email: string) => {
+  const userRepository = getCustomRepository(UserRepository);
+
+  const user = await userRepository.findByEmail(email);
+
+  if (!user) {
+    throw new CustomError("User not found", 404);
+  }
+
+  const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET as string, { expiresIn: 300 });
+
+  return token;
+}
+
+export const changePassword = async (email: string, newPassword: string) => {
+  const userRepository = getCustomRepository(UserRepository);
+
+  const user = await userRepository.findByEmail(email);
+
+  if(!user) {
+    throw new CustomError("User not found", 404);
+  }
+
+  newPassword = bcrypt.hashSync(newPassword, 10);
+
+  await userRepository.save({...user, password: newPassword})
+  
+  return {"message": "your password has been changed"};
 }
